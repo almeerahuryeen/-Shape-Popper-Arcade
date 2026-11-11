@@ -41,7 +41,7 @@ The screenshots below are included in [`assets/screenshots/`](/assets/screenshot
 
 | Main menu | Theme selection |
 |:---:|:---:|
-| ![Main menu](/assets/screenshots/01-main-menu.png) | ![Theme selection](/assets/screenshots/02-theme-selection.png) |
+| assets/01-main-menu.png|
 
 | Match Challenge | Free Pop |
 |:---:|:---:|
