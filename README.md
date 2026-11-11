@@ -35,7 +35,6 @@ The game includes three play modes, selectable visual themes, adjustable startin
 - **Pause and resume** — pause the game, reset the current score or return to the main menu.
 - **Canvas animation** — falling shapes and the game HUD are drawn dynamically.
 - **Responsive game area** — the canvas adapts to its displayed size.
-
 ## 🕹️ Screenshots
 
 The screenshots below are included in [`assets/screenshots/`](assets/screenshots/).
