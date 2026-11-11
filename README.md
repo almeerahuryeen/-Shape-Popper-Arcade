@@ -37,27 +37,28 @@ The game includes three play modes, selectable visual themes, adjustable startin
 - **Responsive game area** — the canvas adapts to its displayed size.
 ## 🕹️ Screenshots
 
-The screenshots below are included in [`assets/screenshots/`](assets/screenshots/).
+The screenshots below are included in [`assets/screenshots/`](/assets/screenshots/).
 
 | Main menu | Theme selection |
 |:---:|:---:|
-| <img src="assets/screenshots/01-main-menu.png?raw=true" alt="Main menu" width="350"> | <img src="assets/screenshots/02-theme-selection.png?raw=true" alt="Theme selection" width="350"> |
+| ![Main menu](/assets/screenshots/01-main-menu.png) | ![Theme selection](/assets/screenshots/02-theme-selection.png) |
 
 | Match Challenge | Free Pop |
 |:---:|:---:|
-| <img src="assets/screenshots/03-match-challenge-gameplay.png?raw=true" alt="Match Challenge gameplay" width="350"> | <img src="assets/screenshots/04-free-pop-gameplay.png?raw=true" alt="Free Pop gameplay" width="350"> |
+| ![Match Challenge gameplay](/assets/screenshots/03-match-challenge-gameplay.png) | ![Free Pop gameplay](/assets/screenshots/04-free-pop-gameplay.png) |
 
 | 1v1 gameplay | Match result |
 |:---:|:---:|
-| <img src="assets/screenshots/05-versus-gameplay.png?raw=true" alt="Versus gameplay" width="350"> | <img src="assets/screenshots/06-versus-result-tie.png?raw=true" alt="Versus tie result" width="350"> |
+| ![Versus gameplay](/assets/screenshots/05-versus-gameplay.png) | ![Versus tie result](/assets/screenshots/06-versus-result-tie.png) |
 
 <div align="center">
 
 **Game Over screen**
 
-<img src="assets/screenshots/07-game-over-screen.png?raw=true" alt="Game Over screen" width="350">
+![Game Over screen](/assets/screenshots/07-game-over-screen.png)
 
 </div>
+
 
 
 ## 🚀 Getting Started
