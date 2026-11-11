@@ -4,19 +4,12 @@
 
 ### A colorful, browser-based shape-catching game built with HTML, CSS and JavaScript.
 
-![Main Menu](assets/screenshots/01-main-menu.png)
+[![HTML5](https://img.shields.io/badge/HTML5-Canvas-E34F26?logo=html5&logoColor=white)](https://developer.mozilla.org/docs/Web/HTML)
+[![CSS3](https://img.shields.io/badge/CSS3-Styling-1572B6?logo=css3&logoColor=white)](https://developer.mozilla.org/docs/Web/CSS)
+[![JavaScript](https://img.shields.io/badge/JavaScript-Vanilla-F7DF1E?logo=javascript&logoColor=111)](https://developer.mozilla.org/docs/Web/JavaScript)
+[![Platform](https://img.shields.io/badge/Platform-Web-brightgreen?logo=googlechrome&logoColor=white)](https://developer.mozilla.org/docs/Web)
+[![No Build Required](https://img.shields.io/badge/Build-Not%20Required-success)](#getting-started)
 
-![Theme Selection](assets/screenshots/02-theme-selection.png)
-
-![Match Challenge](assets/screenshots/03-match-challenge-gameplay.png)
-
-![Free Pop](assets/screenshots/04-free-pop-gameplay.png)
-
-![Versus Gameplay](assets/screenshots/05-versus-gameplay.png)
-
-![Versus Result](assets/screenshots/06-versus-result-tie.png)
-
-![Game Over](assets/screenshots/07-game-over-screen.png)
 **Choose a mode, pop the shapes, beat your score — and watch out for bombs!**
 
 </div>
