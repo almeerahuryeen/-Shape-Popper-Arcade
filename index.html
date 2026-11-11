@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Shape Popper Arcade</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+            margin: 0;
+            padding: 0;
+        }
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: #111;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        #game-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            height: 100%;
+            max-height: 600px;
+            background: #000;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border-radius: 8px;
+        }
+        canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+        .screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: rgba(15, 15, 25, 0.95);
+            padding: 20px;
+            text-align: center;
+            z-index: 10;
+        }
+        .hidden {
+            display: none !important;
+        }
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: #FFD700;
+            text-shadow: 0 0 10px rgba(255,215,0,0.5);
+        }
+        h2 {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            color: #fff;
+        }
+        .btn {
+            background: linear-gradient(135deg, #ff416c, #ff4b2b);
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            margin: 10px;
+            min-width: 200px;
+            transition: transform 0.1s, box-shadow 0.1s;
+            box-shadow: 0 4px 15px rgba(255,65,108,0.4);
+        }
+        .btn:active {
+            transform: scale(0.95);
+        }
+        .btn-secondary {
+            background: linear-gradient(135deg, #4776e6, #8e54e9);
+            box-shadow: 0 4px 15px rgba(71,118,230,0.4);
+        }
+        .btn-panel {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            max-width: 500px;
+            margin-bottom: 15px;
+        }
+        .settings-card {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 15px;
+            width: 100%;
+            max-width: 450px;
+            margin-bottom: 20px;
+        }
+        .setting-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 10px 0;
+        }
+        label {
+            font-size: 0.95rem;
+            color: #ccc;
+        }
+        select, input[type="range"] {
+            background: #222;
+            color: white;
+            border: 1px solid #444;
+            padding: 6px 12px;
+            border-radius: 6px;
+            outline: none;
+            cursor: pointer;
+        }
+        input[type="range"] {
+            width: 150px;
+        }
+        .p-turn {
+            font-size: 1.5rem;
+            color: #00ffcc;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div id="game-container">
+    <canvas id="gameCanvas"></canvas>
+
+    <!-- Main Start Screen -->
+    <div id="start-screen" class="screen">
+        <h1>🎈 Shape Popper Arcade 🎈</h1>
+        
+        <div class="settings-card">
+            <h3>🎮 Customization & Settings</h3>
+            <div class="setting-row">
+                <label for="themeSelect">🎨 Game Theme:</label>
+                <select id="themeSelect">
+                    <option value="space">🚀 Space Exploration</option>
+                    <option value="candy">🍬 Candy Kingdom</option>
+                    <option value="ocean">🐠 Deep Ocean</option>
+                </select>
+            </div>
+            <div class="setting-row">
+                <label for="speedRange">⚡ Initial Speed:</label>
+                <input type="range" id="speedRange" min="1" max="5" value="2" step="0.5">
+            </div>
+            <div class="setting-row">
+                <label for="audioToggle">🔊 Game Sound:</label>
+                <select id="audioToggle">
+                    <option value="on">Enabled</option>
+                    <option value="off">Muted</option>
+                </select>
+            </div>
+        </div>
+
+        <h2>Select Game Mode:</h2>
+        <div class="btn-panel">
+            <button class="btn" onclick="startGame('match')">🎯 Match Challenge (3 ♥)</button>
+            <button class="btn" onclick="startGame('free')">💥 Free Pop (Avoid Bombs)</button>
+            <button class="btn" onclick="startGame('versus')">⚔️ 1v1 Turn-Based Mode</button>
+        </div>
+    </div>
+
+    <!-- Pause Screen -->
+    <div id="pause-screen" class="screen hidden">
+        <h1>⏸️ Game Paused</h1>
+        <div class="btn-panel">
+            <button class="btn" onclick="resumeGame()">▶️ Resume</button>
+            <button class="btn btn-secondary" onclick="resetCurrentScore()">🔄 Reset Score</button>
+            <button class="btn btn-secondary" onclick="goHome()">🏠 Home Menu</button>
+            <button class="btn" style="background:#555;" onclick="window.close(); alert('Exit triggered! Close this window tab.');">❌ Exit</button>
+        </div>
+    </div>
+
+    <!-- Game Over Screen -->
+    <div id="gameover-screen" class="screen hidden">
+        <h1 id="gameover-title">💀 Game Over</h1>
+        <h2 id="final-score-text">Score: 0</h2>
+        <div class="btn-panel">
+            <button class="btn" id="retryBtn" onclick="restartGame()">🔄 Play Again</button>
+            <button class="btn btn-secondary" onclick="goHome()">🏠 Main Menu</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+
+    // UI Screen References
+    const startScreen = document.getElementById('start-screen');
+    const pauseScreen = document.getElementById('pause-screen');
+    const gameoverScreen = document.getElementById('gameover-screen');
+    const gameoverTitle = document.getElementById('gameover-title');
+    const finalScoreText = document.getElementById('final-score-text');
+
+    // Web Audio Synth Engine
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function playSound(type) {
+        if (document.getElementById('audioToggle').value === 'off') return;
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        if (type === 'pop') {
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(400, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 0.1);
+            gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+            gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.1);
+            osc.start(); osc.stop(audioCtx.currentTime + 0.1);
+        } else if (type === 'wrong') {
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+            osc.frequency.linearRampToValueAtTime(70, audioCtx.currentTime + 0.2);
+            gain.gain.setValueAtTime(0.4, audioCtx.currentTime);
+            gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.2);
+            osc.start(); osc.stop(audioCtx.currentTime + 0.2);
+        } else if (type === 'bomb') {
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(100, audioCtx.currentTime);
+            osc.frequency.linearRampToValueAtTime(20, audioCtx.currentTime + 0.4);
+            gain.gain.setValueAtTime(0.6, audioCtx.currentTime);
+            gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.4);
+            osc.start(); osc.stop(audioCtx.currentTime + 0.4);
+        }
+    }
+
+    function triggerVibration() {
+        if (navigator.vibrate) {
+            navigator.vibrate([200, 100, 200]);
+        }
+    }
+
+    // State Variables
+    let gameState = 'START_SCREEN'; 
+    let gameMode = 'match'; // 'match', 'free', 'versus'
+    let score = 0;
+    let lives = 3;
+    let speedModifier = 2;
+    let currentTheme = 'space';
+    
+    // 1v1 Versus State Tracker
+    let versusTurn = 1; // Player 1 or Player 2
+    let p1Score = 0;
+    let p2Score = 0;
+    let versusPhase = 'P1_PLAYING'; // 'P1_PLAYING', 'P1_DONE', 'P2_PLAYING'
+    let modeTimer = 0;
+
+    // Game Items List
+    let items = [];
+    let targetColor = '';
+    let targetShape = '';
+    
+    const colors = ['#FF416C', '#4776E6', '#00FFCC', '#FFD700'];
+    const shapes = ['circle', 'square', 'triangle'];
+
+    // Resize canvas bounding boundaries
+    function resizeCanvas() {
+        canvas.width = canvas.offsetWidth;
+        canvas.height = canvas.offsetHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    // Configuration Themes Engine Map
+    const themes = {
+        space: { bg: '#0b0b1e', targetLabel: '🚀 TARGET PROP:', shapes: ['⭐ Star', '🪐 Planet', '☄️ Comet'] },
+        candy: { bg: '#2a0825', targetLabel: '🍬 SWEET TO MATCH:', shapes: ['🍬 Candy', '🍩 Donut', '🧁 Cake'] },
+        ocean: { bg: '#021B3A', targetLabel: '🐠 SEA LIFE MATCH:', shapes: ['🐠 Fish', '🦀 Crab', '🐚 Shell'] }
+    };
+
+    function generateTarget() {
+        targetColor = colors[Math.floor(Math.random() * colors.length)];
+        targetShape = shapes[Math.floor(Math.random() * shapes.length)];
+    }
+
+    function spawnItem() {
+        const size = Math.random() * 20 + 25;
+        const isBomb = (gameMode === 'free' || gameMode === 'versus') && Math.random() < 0.25;
+        
+        items.push({
+            x: Math.random() * (canvas.width - size * 2) + size,
+            y: -size,
+            size: size,
+            color: isBomb ? '#000000' : colors[Math.floor(Math.random() * colors.length)],
+            shape: shapes[Math.floor(Math.random() * shapes.length)],
+            speed: (Math.random() * 2 + speedModifier),
+            isBomb: isBomb
+        });
+    }
+
+    function startGame(mode) {
+        gameMode = mode;
+        currentTheme = document.getElementById('themeSelect').value;
+        speedModifier = parseFloat(document.getElementById('speedRange').value);
+        
+        // Reset counters
+        score = 0;
+        lives = 3;
+        items = [];
+        versusTurn = 1;
+        p1Score = 0;
+        p2Score = 0;
+        versusPhase = 'P1_PLAYING';
+        modeTimer = gameMode === 'versus' ? 600 : 0; // Fixed duration loops for turn
+
+        generateTarget();
+        startScreen.classList.add('hidden');
+        pauseScreen.classList.add('hidden');
+        gameoverScreen.classList.add('hidden');
+        gameState = 'PLAYING';
+    }
+
+    function pauseGame() {
+        if (gameState === 'PLAYING') {
+            gameState = 'PAUSED';
+            pauseScreen.classList.remove('hidden');
+        }
+    }
+
+    function resumeGame() {
+        gameState = 'PLAYING';
+        pauseScreen.classList.add('hidden');
+    }
+
+    function resetCurrentScore() {
+        score = 0;
+        p1Score = 0;
+        p2Score = 0;
+        resumeGame();
+    }
+
+    function goHome() {
+        gameState = 'START_SCREEN';
+        startScreen.classList.remove('hidden');
+        pauseScreen.classList.add('hidden');
+        gameoverScreen.classList.add('hidden');
+    }
+
+    function triggerGameOver(customMessage) {
+        gameState = 'GAME_OVER';
+        triggerVibration();
+        gameoverScreen.classList.remove('hidden');
+        
+        if (customMessage) {
+            gameoverTitle.innerHTML = customMessage;
+            finalScoreText.innerHTML = `P1: ${p1Score} Points | P2: ${p2Score} Points`;
+        } else {
+            gameoverTitle.innerHTML = "💀 Game Over!";
+            finalScoreText.innerHTML = `Final Score: ${score}`;
+        }
+    }
+
+    function restartGame() {
+        startGame(gameMode);
+    }
+
+    // Touch/Click Interaction Input Code Handler
+    function handleTouch(clientX, clientY) {
+        if (gameState !== 'PLAYING') return;
+
+        // Check Pause Button Bounding Box Click
+        if (clientX > canvas.width - 60 && clientY < 50) {
+            pauseGame();
+            return;
+        }
+
+        const rect = canvas.getBoundingClientRect();
+        const clickX = clientX - rect.left;
+        const clickY = clientY - rect.top;
+
+        for (let i = items.length - 1; i >= 0; i--) {
+            const item = items[i];
+            const dist = Math.hypot(clickX - item.x, clickY - item.y);
+            
+            if (dist < item.size + 15) { // Cushioned hit box for kids
+                items.splice(i, 1);
+                
+                if (item.isBomb) {
+                    playSound('bomb');
+                    if (gameMode === 'free') {
+                        score = Math.max(0, score - 5);
+                    } else if (gameMode === 'versus') {
+                        if (versusTurn === 1) p1Score = Math.max(0, p1Score - 5);
+                        else p2Score = Math.max(0, p2Score - 5);
+                    }
+                    continue;
+                }
+
+                // Verify Matching Target Conditions
+                if (gameMode === 'match') {
+                    if (item.color === targetColor && item.shape === targetShape) {
+                        playSound('pop');
+                        score++;
+                        if (score % 3 === 0) speedModifier += 0.3; // Incremental auto scale
+                        generateTarget();
+                    } else {
+                        playSound('wrong');
+                        lives--;
+                        if (lives <= 0) triggerGameOver();
+                    }
+                } else if (gameMode === 'free') {
+                    playSound('pop');
+                    score++;
+                } else if (gameMode === 'versus') {
+                    playSound('pop');
+                    if (versusTurn === 1) p1Score++;
+                    else p2Score++;
+                }
+                break;
+            }
+        }
+    }
+
+    canvas.addEventListener('mousedown', (e) => handleTouch(e.clientX, e.clientY));
+    canvas.addEventListener('touchstart', (e) => {
+        if(e.touches.length > 0) handleTouch(e.touches[0].clientX, e.touches[0].clientY);
+    });
+
+    // Render Canvas Layout Engine Shapes
+    function drawShape(ctx, shape, x, y, size, color) {
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        if (shape === 'circle') {
+            ctx.arc(x, y, size, 0, Math.PI * 2);
+        } else if (shape === 'square') {
+            ctx.rect(x - size, y - size, size * 2, size * 2);
+        } else if (shape === 'triangle') {
+            ctx.moveTo(x, y - size);
+            ctx.lineTo(x - size, y + size);
+            ctx.lineTo(x + size, y + size);
+            ctx.closePath();
+        }
+        ctx.fill();
+    }
+
+    // Core Frame Automation Loop
+    function update() {
+        if (gameState === 'PLAYING') {
+            ctx.fillStyle = themes[currentTheme].bg;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Render Header UI Stats
+            ctx.fillStyle = 'rgba(255,255,255,0.1)';
+            ctx.fillRect(0, 0, canvas.width, 60);
+
+            // Draw Pause Key Icon Frame
+            ctx.fillStyle = '#fff';
+            ctx.fillRect(canvas.width - 45, 18, 8, 24);
+            ctx.fillRect(canvas.width - 30, 18, 8, 24);
+
+            ctx.fillStyle = '#fff';
+            ctx.font = 'bold 16px sans-serif';
+
+            if (gameMode === 'match') {
+                ctx.fillText(`${themes[currentTheme].targetLabel}`, 20, 35);
+                drawShape(ctx, targetShape, 210, 30, 14, targetColor);
+                
+                // Draw 3 Hearts HUD
+                let heartStr = '';
+                for(let h=0; h<3; h++) heartStr += h < lives ? '❤️ ' : '🖤 ';
+                ctx.fillText(`Life: ${heartStr}`, canvas.width - 200, 35);
+                ctx.fillText(`Score: ${score}`, canvas.width - 320, 35);
+
+            } else if (gameMode === 'free') {
+                ctx.fillText(`💥 FREE POP MODE (Avoid Black Bombs!)`, 20, 35);
+                ctx.fillText(`Score: ${score}`, canvas.width - 180, 35);
+            } else if (gameMode === 'versus') {
+                modeTimer--;
+                ctx.fillText(`⚔️ Turn: Player ${versusTurn} | Time Left: ${Math.ceil(modeTimer/60)}s`, 20, 35);
+                ctx.fillText(`P1 Score: ${p1Score} | P2 Score: ${p2Score}`, canvas.width - 280, 35);
+
+                if (modeTimer <= 0) {
+                    if (versusTurn === 1) {
+                        versusTurn = 2;
+                        modeTimer = 600; // Reset turn clock for P2
+                        items = [];
+                        alert("Player 1 Turn Ended! Player 2 Get Ready!");
+                    } else {
+                        // Both rounds finished, find victor
+                        let victorMsg = "";
+                        if (p1Score > p2Score) victorMsg = "🏆 Player 1 Wins Match!";
+                        else if (p2Score > p1Score) victorMsg = "🏆 Player 2 Wins Match!";
+                        else victorMsg = "🤝 It's a Tie Match!";
+                        triggerGameOver(victorMsg);
+                    }
+                }
+            }
+
+            // Spawn loop control logic
+            if (Math.random() < 0.03) spawnItem();
+
+            // Render & updates falling physics items
+            for (let i = items.length - 1; i >= 0; i--) {
+                const item = items[i];
+                item.y += item.speed;
+
+                if (item.isBomb) {
+                    // Draw spike bomb representation
+                    ctx.fillStyle = '#000';
+                    ctx.beginPath();
+                    ctx.arc(item.x, item.y, item.size, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.strokeStyle = '#ff4b2b';
+                    ctx.lineWidth = 3;
+                    ctx.stroke();
+                } else {
+                    drawShape(ctx, item.shape, item.x, item.y, item.size, item.color);
+                }
+
+                // Fall off bottom edge limits boundary check
+                if (item.y - item.size > canvas.height) {
+                    items.splice(i, 1);
+                    if (gameMode === 'match' && item.color === targetColor && item.shape === targetShape) {
+                        // Missed true objective element target penalty
+                        playSound('wrong');
+                        lives--;
+                        if (lives <= 0) triggerGameOver();
+                    }
+                }
+            }
+        }
+        requestAnimationFrame(update);
+    }
+
+    update();
+</script>
+
+</body>
+</html>
